@@ -1,0 +1,3 @@
+[submodule "third-party/Divert"]
+	path = third-party/Divert
+	url = https://github.com/Zorus/Divert
