@@ -3,11 +3,9 @@ nuget {
         id = windivertcpp;
         version : 0.0.0.1;
         title: WinDivertCpp;
-        authors: {Zoruc Inc.};
+        authors: {Zorus Inc.};
         owners: {Zorus Project};
-        licenseUrl: "https://raw.githubusercontent.com/Zorus/WinDivertCpp/main/LICENSE";
         projectUrl: "https://github.com/Zorus/WinDivertCpp";
-        iconUrl: "https://avatars.githubusercontent.com/u/25488642?s=200&v=4";
         requireLicenseAcceptance:false;
         summary: C++ Wrapper around WinDivert;
         description: @"C++ Wrapper around WinDivert";
