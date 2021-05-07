@@ -1,0 +1,1 @@
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& {Write-NuGetPackage .\WinDivertCpp.autopkg}"
