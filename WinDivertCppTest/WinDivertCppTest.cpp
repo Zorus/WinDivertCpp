@@ -52,7 +52,7 @@ int wmain(int argc, wchar_t** argv)
         winDiver->WinDivertOpen(filterRuleString, WINDIVERT_LAYER::WINDIVERT_LAYER_NETWORK, 0, 0);
 
         winDiver->WinDivertSetParam(WINDIVERT_PARAM::WINDIVERT_PARAM_QUEUE_LENGTH, 1000);
-        winDiver->WinDivertSetParam(WINDIVERT_PARAM::WINDIVERT_PARAM_QUEUE_SIZE, 33554432);
+        winDiver->WinDivertSetParam(WINDIVERT_PARAM::WINDIVERT_PARAM_QUEUE_SIZE, 4000000);
         winDiver->WinDivertSetParam(WINDIVERT_PARAM::WINDIVERT_PARAM_QUEUE_TIME, 5000);
         
         std::vector<char> recvPacketsRaw;
