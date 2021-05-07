@@ -43,7 +43,7 @@ namespace WinDivertCpp
         return isValid;
     }
     
-    bool WinDivert::WinDivertOpen(const std::string& filter, ::WINDIVERT_LAYER layer,
+    void WinDivert::WinDivertOpen(const std::string& filter, ::WINDIVERT_LAYER layer,
         int16_t priority, uint64_t flags)
     {
         if (m_winDivertHandle != INVALID_HANDLE_VALUE)
@@ -51,7 +51,10 @@ namespace WinDivertCpp
             WinDivertClose();
         }
         m_winDivertHandle = m_winDiverLib->m_WinDivertOpen(filter.c_str(), layer, priority, flags);
-        return m_winDivertHandle != INVALID_HANDLE_VALUE;
+        if (m_winDivertHandle == INVALID_HANDLE_VALUE)
+        {
+            throw WinApiException("WinDivertOpen failed.");
+        }
     }
 
     void WinDivert::WinDivertRecv(std::vector<char>& packet, ::WINDIVERT_ADDRESS* pAddr)
@@ -80,7 +83,7 @@ namespace WinDivertCpp
         packet.resize(recivedSize);
     }
 
-    bool WinDivert::WinDivertRecvEx(std::vector<char>& packet, uint64_t flags,
+    uint32_t WinDivert::WinDivertRecvEx(std::vector<char>& packet, uint64_t flags,
                                     std::vector<::WINDIVERT_ADDRESS>& pAddr,
                                     OverlappedEvent* overlappedEvent,
                                     OverlappedEvent::TimeoutType ioTimeOut)
@@ -149,7 +152,7 @@ namespace WinDivertCpp
             size_t addrCount = pAddrSizeInBytes / sizeof(std::remove_reference<decltype(pAddr)>::type::value_type);
             pAddr.resize(addrCount);
         }
-        return success;
+        return recivedSizeInBytes;
     }
 
     uint32_t WinDivert::WinDivertSend(const std::vector<char>& packet, const ::WINDIVERT_ADDRESS* pAddr)
@@ -179,10 +182,10 @@ namespace WinDivertCpp
             overlappedEvent->Reset();
             overlappedGuard->hEvent = overlappedEvent->GetNativeHandle();
         }
-        uint32_t result = 0;
+        uint32_t sentBytes = 0;
         size_t pAddrSizeInBytes = pAddr.size() * sizeof(std::remove_reference<decltype(pAddr)>::type::value_type);
         bool success = m_winDiverLib->m_WinDivertSendEx(m_winDivertHandle, packet.data(),
-            packet.size(), &result, flags, pAddr.data(), pAddrSizeInBytes, overlappedGuard.get());
+            packet.size(), &sentBytes, flags, pAddr.data(), pAddrSizeInBytes, overlappedGuard.get());
 
         if (!success)
         {
@@ -213,14 +216,14 @@ namespace WinDivertCpp
                         throw WinApiException("WinDivertSendEx call. GetOverlappedResult failed.");
                     }
                 }
-                result = overlappedOperationBytes;
+                sentBytes = overlappedOperationBytes;
             }
             else
             {
                 throw WinApiException(lastError, "WinDivertSendEx failed. Unexpected wait result returned..");
             }
         }
-        return result;
+        return sentBytes;
     }
 
     void WinDivert::WinDivertShutdown(::WINDIVERT_SHUTDOWN how)

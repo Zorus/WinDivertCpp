@@ -74,15 +74,15 @@ namespace WinDivertCpp
         virtual ~WinDivert();
 
         //Win Divert API
-        bool WinDivertOpen(const std::string& filter, ::WINDIVERT_LAYER layer, 
+        void WinDivertOpen(const std::string& filter, ::WINDIVERT_LAYER layer, 
                            int16_t priority, uint64_t flags);
 
         void WinDivertRecv(std::vector<char> &packet, ::WINDIVERT_ADDRESS* pAddr);
 
-        bool WinDivertRecvEx(std::vector<char>& packet, uint64_t flags,
-                             std::vector<::WINDIVERT_ADDRESS> &pAddr, 
-                             OverlappedEvent* overlappedEvent,
-                             OverlappedEvent::TimeoutType ioTimeOut);
+        uint32_t WinDivertRecvEx(std::vector<char>& packet, uint64_t flags,
+                                 std::vector<::WINDIVERT_ADDRESS> &pAddr, 
+                                 OverlappedEvent* overlappedEvent,
+                                 OverlappedEvent::TimeoutType ioTimeOut);
 
         uint32_t WinDivertSend(const std::vector<char>& packet, const ::WINDIVERT_ADDRESS* pAddr);
 
