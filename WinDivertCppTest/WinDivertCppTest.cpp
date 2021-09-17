@@ -4,7 +4,9 @@
 #include <chrono>
 #include "WinDivertCpp.h"
 
+static std::mutex g_sync;
 static std::atomic_int32_t g_recivedCount = 0;
+static std::atomic_int32_t g_recivedSizeInBytes = 0;
 
 void Filter(WinDivertCpp::WinDivert* winDivert, 
             const std::vector<WinDivertCpp::WinDivertPacket>& parsedRecvPackets,
@@ -15,17 +17,30 @@ void Filter(WinDivertCpp::WinDivert* winDivert,
 {
     sendPacketsRaw = recvPacketsRaw;
     sendAddrs = recvAddrs;
-    g_recivedCount += parsedRecvPackets.size();
+
+    {
+        std::unique_lock lock(g_sync);
+
+        g_recivedCount += parsedRecvPackets.size();
+        for (auto packet : parsedRecvPackets)
+        {
+            g_recivedSizeInBytes += packet.PacketSize;
+        }
+    }
 }
 
 void PrintRevicedPackets()
 {
     while (true)
     {
-        if (g_recivedCount)
         {
-            std::cout << "Packets handled count : " << std::to_string(g_recivedCount) << std::endl;
-            g_recivedCount = 0;
+            std::unique_lock lock(g_sync);
+            if (g_recivedCount || g_recivedSizeInBytes)
+            {
+                std::cout << "Packets handled: Count =  " << std::to_string(g_recivedCount) << ", Bytes = " << g_recivedSizeInBytes << std::endl;
+                g_recivedCount = 0;
+                g_recivedSizeInBytes = 0;
+            }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }

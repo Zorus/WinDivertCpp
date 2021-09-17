@@ -59,6 +59,7 @@ namespace WinDivertCpp
         PWINDIVERT_UDPHDR pUdpHdr;
         PVOID pData;
         UINT DataLen;
+        UINT PacketSize;
     };
 
     class WinDivert

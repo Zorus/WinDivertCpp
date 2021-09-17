@@ -298,6 +298,15 @@ namespace WinDivertCpp
                 break;
             }
 
+            if (pNextPacket != nullptr)
+            {
+                winDivertPacket.PacketSize = static_cast<UINT>(pNextPacket - pPacket);
+            }
+            else
+            {
+                winDivertPacket.PacketSize = packetSize;
+            }
+
             winDivertPackets.push_back(winDivertPacket);
             memset(&winDivertPacket, 0, sizeof(WinDivertPacket));
 

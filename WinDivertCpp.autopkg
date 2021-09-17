@@ -1,7 +1,7 @@
 nuget {
     nuspec {
         id = windivertcpp;
-        version : 0.0.0.1;
+        version : 0.0.0.5;
         title: WinDivertCpp;
         authors: {Zorus Inc.};
         owners: {Zorus Project};
